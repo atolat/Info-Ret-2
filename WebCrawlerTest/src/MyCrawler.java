@@ -1,6 +1,9 @@
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -14,6 +17,9 @@ public class MyCrawler extends WebCrawler {
     private final static Pattern FILTERS = Pattern.compile(".*(\\.(css|js|gif|jpg"
                                                            + "|png|mp3|mp3|zip|gz))$");
     public static int i=0;
+    
+    ArrayList<String> urlList=new ArrayList<>();
+    
 
     /**
      * This method receives two parameters. The first parameter is the page
@@ -46,6 +52,7 @@ public class MyCrawler extends WebCrawler {
      @Override
      public void visit(Page page) {
          String url = page.getWebURL().getURL();
+         urlList.add(url);
          System.out.println("URL: " + url);
          
          
@@ -63,21 +70,49 @@ public class MyCrawler extends WebCrawler {
  				e.printStackTrace();
  			}
  			
-        	 
+   	 
              HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
-             writer.println(url+"\n");
+             //writer.println(url+"\n");
              String text = htmlParseData.getText();
              writer.println(htmlParseData.getText());
-             
              String html = htmlParseData.getHtml();
              Set<WebURL> links = htmlParseData.getOutgoingUrls();
-
              System.out.println("Text length: " + text.length());
              System.out.println("Html length: " + html.length());
              System.out.println("Number of outgoing links: " + links.size());
-            
-     		writer.close();
+        	 writer.close();
+        	 
+        	 
              
-         }i++;
+         }
+         try {
+			Tokenize t = new Tokenize("D:\\crawlerData\\"+i+".txt");
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+         i++;
+         try {
+			printURL(urlList);
+		} catch (FileNotFoundException | UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
+     
+     public void printURL(ArrayList<String> urlList2) throws FileNotFoundException, UnsupportedEncodingException{
+			PrintWriter writerURL = new PrintWriter("D:\\crawlerDataTokenized\\url.txt", "UTF-8");
+			for(String s: urlList2){
+				writerURL.println(s);
+			}
+			writerURL.close();
+
+    	 
+     }
+     
+     
+     
 }
